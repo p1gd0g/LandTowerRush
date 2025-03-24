@@ -8,6 +8,11 @@ public class MapManager : MonoSingleton<MapManager>
     const int MapWidth = 20;
     const int MapHeight = 10;
 
+    private Vector3 lastMousePosition; // 上一次鼠标位置
+    public float dragSpeed = 0.1f;     // 拖拽速度
+
+    public Transform target;
+
     public void InitMap()
     {
         Debug.Log("InitMap");
@@ -23,10 +28,28 @@ public class MapManager : MonoSingleton<MapManager>
         }
     }
 
+    private void Update()
+    {
+        HandleDrag();
+    }
+
+    private void HandleDrag()
+    {
+        if (Input.GetMouseButtonDown(0)) // 鼠标左键按下
+        {
+            lastMousePosition = Input.mousePosition;
+        }
+        else if (Input.GetMouseButton(0)) // 鼠标左键拖拽
+        {
+            Vector3 delta = Input.mousePosition - lastMousePosition; // 计算鼠标移动的差值
+            Vector3 dragDirection = new Vector3(-delta.x, -delta.y) * dragSpeed; // 转换为拖拽方向
+            target.position += dragDirection; // 移动场景或摄像机
+            lastMousePosition = Input.mousePosition; // 更新鼠标位置
+        }
+    }
 
     protected override void OnInitialized()
     {
         InitMap();
     }
-
 }
